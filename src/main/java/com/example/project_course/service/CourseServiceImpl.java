@@ -26,158 +26,158 @@ public class CourseServiceImpl implements CourseService {
 	@Autowired
 	StudentCourseDao studentCourseDao;
 
-	// ¿ï½Ò¥\¯à
+	// é¸èª²åŠŸèƒ½
 	@Override
 	public CourseResponse chooseCourse(CourseRequest req) {
 		return pickCourse(req);
 	}
 
-	// ¥[°h¿ï¥\¯à
+	// åŠ é€€é¸åŠŸèƒ½
 	@Override
 	public CourseResponse pickAndDropCourse(CourseRequest req) {
-		if (req.getAddOrDrop().equals("¥[¿ï")) {
+		if (req.getAddOrDrop().equals("åŠ é¸")) {
 			return pickCourse(req);
 		}
-		if (req.getAddOrDrop().equals("°h¿ï")) {
+		if (req.getAddOrDrop().equals("é€€é¸")) {
 			return dropCourse(req);
 		}
-		return new CourseResponse("½Ğ¥¿½T¿é¤J¥[¿ï©Î°h¿ï");
+		return new CourseResponse("è«‹æ­£ç¢ºè¼¸å…¥åŠ é¸æˆ–é€€é¸");
 	}
 
-	// ·s¼W½Òµ{
+	// æ–°å¢èª²ç¨‹
 	@Override
 	public CourseResponse addNewCourse(CourseRequest req) {
 		List<Course> list = new ArrayList<Course>();
 		for (Course course : req.getCourseList()) {
 			if (course.getCourseCode().equals("")) {
-				return new CourseResponse("½Òµ{¥N½X¤£±o¬°ªÅ");
+				return new CourseResponse("èª²ç¨‹ä»£ç¢¼ä¸å¾—ç‚ºç©º");
 			}
 			if (course.getCourseName().equals("")) {
-				return new CourseResponse("½Òµ{¦WºÙ¤£±o¬°ªÅ");
+				return new CourseResponse("èª²ç¨‹åç¨±ä¸å¾—ç‚ºç©º");
 			}
 			if (course.getWeek() == null) {
-				return new CourseResponse("¬P´Á¤£±o¬°ªÅ");
+				return new CourseResponse("æ˜ŸæœŸä¸å¾—ç‚ºç©º");
 			}
 			if (course.getStartTime() == null) {
-				return new CourseResponse("¤W½Ò®É¶¡¤£±o¬°ªÅ");
+				return new CourseResponse("ä¸Šèª²æ™‚é–“ä¸å¾—ç‚ºç©º");
 			}
 			if (course.getEndTime() == null) {
-				return new CourseResponse("¤U½Ò®É¶¡¤£±o¬°ªÅ");
+				return new CourseResponse("ä¸‹èª²æ™‚é–“ä¸å¾—ç‚ºç©º");
 			}
 			if (course.getCredit() == null) {
-				return new CourseResponse("¾Ç¤À¤£±o¬°ªÅ");
+				return new CourseResponse("å­¸åˆ†ä¸å¾—ç‚ºç©º");
 			}
 			if (course.getWeek() < 1 || course.getWeek() > 7) {
-				return new CourseResponse("¬P´Á¿ù»~¡A½Ğ¥¿½T¿é¤J1~7");
+				return new CourseResponse("æ˜ŸæœŸéŒ¯èª¤ï¼Œè«‹æ­£ç¢ºè¼¸å…¥1~7");
 			}
 			if (course.getStartTime() > course.getEndTime()) {
-				return new CourseResponse("¤U½Ò®É¶¡¤£±o¦­©ó¤W½Ò®É¶¡");
+				return new CourseResponse("ä¸‹èª²æ™‚é–“ä¸å¾—æ—©æ–¼ä¸Šèª²æ™‚é–“");
 			}
 			if (courseDao.findByCourseCode(course.getCourseCode()) != (null)) {
-				return new CourseResponse("½Òµ{¥N½X¤w­«½Æ");
+				return new CourseResponse("èª²ç¨‹ä»£ç¢¼å·²é‡è¤‡");
 			}
 			if (course.getCredit() < 0 || course.getCredit() > 3) {
-				return new CourseResponse("¾Ç¤À¼Æ¿ù»~¡A½Ğ¿é¤J1~3");
+				return new CourseResponse("å­¸åˆ†æ•¸éŒ¯èª¤ï¼Œè«‹è¼¸å…¥1~3");
 			}
 			list.add(course);
 		}
 		courseDao.saveAll(list);
-		return new CourseResponse("½Òµ{·s¼W§¹¦¨");
+		return new CourseResponse("èª²ç¨‹æ–°å¢å®Œæˆ");
 	}
 
-	// §R°£½Òµ{
+	// åˆªé™¤èª²ç¨‹
 	@Override
 	public CourseResponse deleteCourse(CourseRequest req) {
 		List<Course> removeCoureseList = new ArrayList<Course>();
 		for (String courseCode : req.getCourseCodeList()) {
 			if (!studentCourseDao.findByCourseName(courseCode).isEmpty()) {
-				return new CourseResponse("¸Ó½Òµ{ÁÙ¦³¾Ç¥Í­×²ß");
+				return new CourseResponse("è©²èª²ç¨‹é‚„æœ‰å­¸ç”Ÿä¿®ç¿’");
 			}
 			removeCoureseList.add(courseDao.findByCourseCode(courseCode));
 		}
 		courseDao.deleteAll(removeCoureseList);
-		return new CourseResponse("²¾°£½Òµ{¦¨¥\");
+		return new CourseResponse("ç§»é™¤èª²ç¨‹æˆåŠŸ");
 	}
 
 	@Override
-	// ·s¼W¾Ç¥Í
+	// æ–°å¢å­¸ç”Ÿ
 	public CourseResponse addNewStudent(CourseRequest req) {
 		var student = req.getStudent();
 		if (studentDao.existsById(student.getNumber())) {
-			return new CourseResponse("¸Ó¾Ç¸¹¤w¦s¦b");
+			return new CourseResponse("è©²å­¸è™Ÿå·²å­˜åœ¨");
 		}
 		if (student.getNumber() == 0) {
-			return new CourseResponse("¾Ç¸¹¤£±o¬°0");
+			return new CourseResponse("å­¸è™Ÿä¸å¾—ç‚º0");
 		}
 		if (student.getName().equals("")) {
-			return new CourseResponse("¾Ç¥Í©m¦W¤£±o¬°ªÅ");
+			return new CourseResponse("å­¸ç”Ÿå§“åä¸å¾—ç‚ºç©º");
 		}
 		if (student.getCredit() < 0 || student.getCredit() > 10) {
-			return new CourseResponse("¾Ç¤À¼Æ»İ¤¶©ó0~10");
+			return new CourseResponse("å­¸åˆ†æ•¸éœ€ä»‹æ–¼0~10");
 		}
 		studentDao.save(student);
-		return new CourseResponse("¾Ç¥Í¸ê®Æ«Ø¥ß§¹¦¨");
+		return new CourseResponse("å­¸ç”Ÿè³‡æ–™å»ºç«‹å®Œæˆ");
 	}
 
 	@Override
-	// §R°£¾Ç¥Í
+	// åˆªé™¤å­¸ç”Ÿ
 	public CourseResponse deleteStudent(CourseRequest req) {
 
 		if (!checkNumber(req.getNumber())) {
-			return new CourseResponse("¾Ç¸¹¿ù»~");
+			return new CourseResponse("å­¸è™ŸéŒ¯èª¤");
 		}
 		if (!studentCourseDao.findByNumber(req.getNumber()).isEmpty()) {
-			return new CourseResponse("¦¹¾Ç¥Í¤´¦³­×²ß½Òµ{¡AµLªk§R°£");
+			return new CourseResponse("æ­¤å­¸ç”Ÿä»æœ‰ä¿®ç¿’èª²ç¨‹ï¼Œç„¡æ³•åˆªé™¤");
 		}
 		studentDao.deleteById(req.getNumber());
-		return new CourseResponse("¤w§R°£¸Ó¾Ç¥Í");
+		return new CourseResponse("å·²åˆªé™¤è©²å­¸ç”Ÿ");
 	}
 
-	// ¬d¸ß¾Ç¥Í¿ï¨ìªº©Ò¦³½Òµ{
+	// æŸ¥è©¢å­¸ç”Ÿé¸åˆ°çš„æ‰€æœ‰èª²ç¨‹
 	@Override
 	public SearchCourseResponse searchStudentCourse(SearchCourseRequest req) {
 		if (!checkNumber(req.getNumber())) {
-			return new SearchCourseResponse("¾Ç¸¹¿ù»~");
+			return new SearchCourseResponse("å­¸è™ŸéŒ¯èª¤");
 		}
 		var student = studentDao.findByNumber(req.getNumber());
 		List<Course> courseList = new ArrayList<Course>();
 		for (StudentCourse course : studentCourseDao.findByNumber(req.getNumber())) {
 			courseList.add(courseDao.findByCourseCode(course.getCourseCode()));
 		}
-		return new SearchCourseResponse("¬d¸ß¦¨¥\!", student, courseList);
+		return new SearchCourseResponse("æŸ¥è©¢æˆåŠŸ!", student, courseList);
 	}
 
-	// ¥Î½Òµ{¥N½X§ä½Òµ{
+	// ç”¨èª²ç¨‹ä»£ç¢¼æ‰¾èª²ç¨‹
 	@Override
 	public SearchCourseResponse searchCourseByCode(SearchCourseRequest req) {
 		if (courseDao.findByCourseCode(req.getCourseCode()) == null) {
-			return new SearchCourseResponse("¬dµL¦¹¥N½X!");
+			return new SearchCourseResponse("æŸ¥ç„¡æ­¤ä»£ç¢¼!");
 		}
-		return new SearchCourseResponse("¬d¸ß¦¨¥\!",
+		return new SearchCourseResponse("æŸ¥è©¢æˆåŠŸ!",
 				courseDao.findByCourseCode(req.getCourseCode()));
 	}
 
-	// ¥Î½Òµ{¦WºÙ§ä½Òµ{
+	// ç”¨èª²ç¨‹åç¨±æ‰¾èª²ç¨‹
 	@Override
 	public SearchCourseResponse searchCourseByName(SearchCourseRequest req) {
 		if (courseDao.findByCourseName(req.getCourseName()).isEmpty()) {
-			return new SearchCourseResponse("¬dµL¦¹½Òµ{¦WºÙ!");
+			return new SearchCourseResponse("æŸ¥ç„¡æ­¤èª²ç¨‹åç¨±!");
 		}
-		return new SearchCourseResponse("¬d¸ß¦¨¥\!",
+		return new SearchCourseResponse("æŸ¥è©¢æˆåŠŸ!",
 				courseDao.findByCourseName(req.getCourseName()));
 	}
 
-	// ¤@¨ÇÂ²¤Æµ{¦¡¥Îªºmethod
+	// ä¸€äº›ç°¡åŒ–ç¨‹å¼ç”¨çš„method
 
-	// ½T»{¾Ç¸¹¥¿½T
+	// ç¢ºèªå­¸è™Ÿæ­£ç¢º
 	public boolean checkNumber(int number) {
 		return studentDao.existsByNumber(number);
 	}
 
-	// ¿ï½Ò
+	// é¸èª²
 	public CourseResponse pickCourse(CourseRequest req) {
 		if (!checkNumber(req.getNumber())) {
-			return new CourseResponse("¾Ç¸¹¿ù»~");
+			return new CourseResponse("å­¸è™ŸéŒ¯èª¤");
 		}
 		int studentCredit = studentDao.findByNumber(req.getNumber()).getCredit();
 		int chooseCredit = studentCredit;
@@ -187,16 +187,16 @@ public class CourseServiceImpl implements CourseService {
 				.findByNumber(req.getNumber());
 		for (String course : req.getCourseCodeList()) {
 			if (!courseDao.existsByCourseCode(course)) {
-				return new CourseResponse("½Òµ{¥N½X¿ù»~");
+				return new CourseResponse("èª²ç¨‹ä»£ç¢¼éŒ¯èª¤");
 			}
 			if (studentCourseDao.findByCourseName(course).size() == 3) {
-				return new CourseResponse("­×½Ò¤H¼Æ¤wº¡", course);
-				// ¤@°ó½Ò¥u¯à¤T¤H­×
+				return new CourseResponse("ä¿®èª²äººæ•¸å·²æ»¿", course);
+				// ä¸€å ‚èª²åªèƒ½ä¸‰äººä¿®
 			}
 			Course lesson = courseDao.findByCourseCode(course);
 			chooseCredit += lesson.getCredit();
 			if (chooseCredit > 10) {
-				return new CourseResponse("¿ï­×ªº¾Ç¤À¤w¶W¹L10");
+				return new CourseResponse("é¸ä¿®çš„å­¸åˆ†å·²è¶…é10");
 			}
 			for (StudentCourse studentCourse : studentCourseList) {
 				var lessonWeek = courseDao
@@ -204,11 +204,11 @@ public class CourseServiceImpl implements CourseService {
 				if (lessonWeek.getWeek() == lesson.getWeek()) {
 					if (lesson.getStartTime() >= lessonWeek.getStartTime()
 							|| lesson.getStartTime() <= lessonWeek.getEndTime()) {
-						return new CourseResponse("½Ä°ó");
+						return new CourseResponse("è¡å ‚");
 					}
 					if (lesson.getEndTime() >= lessonWeek.getStartTime()
 							|| lesson.getEndTime() <= lessonWeek.getEndTime()) {
-						return new CourseResponse("½Ä°ó");
+						return new CourseResponse("è¡å ‚");
 					}
 				}
 			}
@@ -225,30 +225,30 @@ public class CourseServiceImpl implements CourseService {
 		studentCourseDao.saveAll(student);
 		studentDao.setStudentCredit(req.getNumber(), chooseCredit);
 		if (!overChoose.isEmpty()) {
-			return new CourseResponse("¿ï½Ò¦¨¥\¦ı¦³­«½Æ¿ï½Ò", student);
+			return new CourseResponse("é¸èª²æˆåŠŸä½†æœ‰é‡è¤‡é¸èª²", student);
 		}
-		return new CourseResponse("¿ï½Ò¦¨¥\", student);
+		return new CourseResponse("é¸èª²æˆåŠŸ", student);
 	}
 
-	// °h¿ï½Òµ{
+	// é€€é¸èª²ç¨‹
 	public CourseResponse dropCourse(CourseRequest req) {
 		if (!checkNumber(req.getNumber())) {
-			return new CourseResponse("¾Ç¸¹¿ù»~!");
+			return new CourseResponse("å­¸è™ŸéŒ¯èª¤!");
 		}
 		var dropCourseList = new ArrayList<StudentCourse>();
 		for (String course : req.getCourseCodeList()) {
 			if (!courseDao.existsByCourseCode(course)) {
-				return new CourseResponse("½Òµ{¥N½X¿ù»~!");
+				return new CourseResponse("èª²ç¨‹ä»£ç¢¼éŒ¯èª¤!");
 			}
 			var lesson = courseDao.findByCourseCode(course);
 			var studentCourse = studentCourseDao.findByNumberIsAndCourseCodeIs(
 					req.getNumber(), lesson.getCourseCode());
 			if (studentCourse == null) {
-				return new CourseResponse("§A¨S¦³­×³o°ó½Ò!");
+				return new CourseResponse("ä½ æ²’æœ‰ä¿®é€™å ‚èª²!");
 			}
 			dropCourseList.add(studentCourse);
 		}
 		studentCourseDao.deleteAll(dropCourseList);
-		return new CourseResponse("¤w¦¨¥\°h¿ï", dropCourseList);
+		return new CourseResponse("å·²æˆåŠŸé€€é¸", dropCourseList);
 	}
 }

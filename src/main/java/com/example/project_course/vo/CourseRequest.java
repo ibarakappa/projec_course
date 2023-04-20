@@ -7,15 +7,15 @@ import com.example.project_course.entity.Student;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CourseRequest {
-	@JsonProperty("¾Ç¸¹")
+	@JsonProperty("å­¸è™Ÿ")
 	private Integer number;
-	@JsonProperty("¥[¿ï©Î°h¿ï")
+	@JsonProperty("åŠ é¸æˆ–é€€é¸")
 	private String addOrDrop;
-	@JsonProperty("½Òµ{¥N½X")
+	@JsonProperty("èª²ç¨‹ä»£ç¢¼")
 	private List<String> courseCodeList;
-	@JsonProperty("½Òµ{¤º®e")
+	@JsonProperty("èª²ç¨‹å…§å®¹")
 	private List<Course> courseList;
-	@JsonProperty("¾Ç¥Í¸ê®Æ")
+	@JsonProperty("å­¸ç”Ÿè³‡æ–™")
 	private Student student;
 
 	public Integer getNumber() {

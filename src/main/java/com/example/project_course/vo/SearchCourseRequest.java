@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SearchCourseRequest {
 
-	@JsonProperty("¾Ç¸¹")
+	@JsonProperty("å­¸è™Ÿ")
 	private Integer number;
-	@JsonProperty("½Òµ{¦WºÙ")
+	@JsonProperty("èª²ç¨‹åç¨±")
 	private String courseName;
-	@JsonProperty("½Òµ{¥N½X")
+	@JsonProperty("èª²ç¨‹ä»£ç¢¼")
 	private String courseCode;
 
 	public Integer getNumber() {

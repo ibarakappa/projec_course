@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SearchCourseResponse {
-	@JsonProperty("¨t²Î°T®§")
+	@JsonProperty("ç³»çµ±è¨Šæ¯")
 	private String message;
-	@JsonProperty("¾Ç¥Í¸ê®Æ")
+	@JsonProperty("å­¸ç”Ÿè³‡æ–™")
 	private Student student;
-	@JsonProperty("±z¬d¸ßªº©Ò¦³½Òµ{¸ê®Æ")
+	@JsonProperty("æ‚¨æŸ¥è©¢çš„æ‰€æœ‰èª²ç¨‹è³‡æ–™")
 	private List<Course> list;
-	@JsonProperty("½Òµ{¸ê®Æ")
+	@JsonProperty("èª²ç¨‹è³‡æ–™")
 	private Course course;
 
 	public SearchCourseResponse() {

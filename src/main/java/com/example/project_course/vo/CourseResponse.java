@@ -10,15 +10,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CourseResponse {
-	@JsonProperty("¨t²Î°T®§")
+	@JsonProperty("ç³»çµ±è¨Šæ¯")
 	private String message;
-	@JsonProperty("½Òµ{:")
+	@JsonProperty("èª²ç¨‹:")
 	private String lesson;
-	@JsonProperty("§Aªº½Òµ{²M³æ")
+	@JsonProperty("ä½ çš„èª²ç¨‹æ¸…å–®")
 	private List<StudentCourse> list;
-	@JsonProperty("½Òµ{¸ê®Æ")
+	@JsonProperty("èª²ç¨‹è³‡æ–™")
 	private List<Course> courselist;
-	@JsonProperty("¾Ç¥Í¸ê®Æ")
+	@JsonProperty("å­¸ç”Ÿè³‡æ–™")
 	private Student student;
 
 	public CourseResponse(String message, Student student) {
