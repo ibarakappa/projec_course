@@ -14,4 +14,8 @@ public interface CourseDao extends JpaRepository<Course, Integer> {
 	List<Course> findByWeekIs(int week);
 
 	List<Course> findByCourseName(String code);
+
+	List<Course> findByWeekIsAndStartTimeBetweenOrWeekIsAndEndTimeBetween(int weekOfStart,
+			int startTimeOfStart, int endTimeOfStart, int weekOfEnd, int startTimeOfEnd,
+			int endTimeOfEnd);
 }

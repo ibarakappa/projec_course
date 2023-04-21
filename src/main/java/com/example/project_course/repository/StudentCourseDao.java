@@ -14,6 +14,6 @@ public interface StudentCourseDao extends JpaRepository<StudentCourse, StudentCo
 
 	StudentCourse findByNumberIsAndCourseCodeIs(int number, String CourseNameCode);
 
-	List<StudentCourse> findByCourseName(String courseName);
+	List<StudentCourse> findByCourseCode(String courseCode);
 
 }
