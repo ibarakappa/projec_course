@@ -15,12 +15,14 @@ public interface CourseService {
 
 	public CourseResponse addNewCourse(CourseRequest req);
 
-//	新增修改功能(課程與學生)
+//	新增修改功能(課程)
 	public CourseResponse updateCourse(CourseRequest req);
 
 	public CourseResponse deleteCourse(CourseRequest req);
 
 	public CourseResponse addNewStudent(CourseRequest req);
+
+//	新增修改功能(學生)
 
 	public CourseResponse deleteStudent(CourseRequest req);
 

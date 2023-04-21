@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.example.project_course.entity.Course;
+import com.example.project_course.entity.Student;
 import com.example.project_course.entity.StudentCourse;
 import com.example.project_course.repository.CourseDao;
 import com.example.project_course.repository.StudentCourseDao;
@@ -96,6 +97,9 @@ public class CourseServiceImpl implements CourseService {
 			if (!studentCourseDao.findByCourseCode(courseCode).isEmpty()) {
 				return new CourseResponse("該課程還有學生修習");
 			}
+			if (!courseDao.existsByCourseCode(courseCode)) {
+				return new CourseResponse("課程代碼錯誤");
+			}
 			removeCoureseList.add(courseDao.findByCourseCode(courseCode));
 		}
 		courseDao.deleteAll(removeCoureseList);
@@ -139,15 +143,16 @@ public class CourseServiceImpl implements CourseService {
 	// 查詢學生選到的所有課程
 	@Override
 	public SearchCourseResponse searchStudentCourse(SearchCourseRequest req) {
-//		List<StudentCourse> studentAndCouseList = studentCourseDao.findByNumber(req.getNumber());
+		List<StudentCourse> studentAndCourseList = studentCourseDao
+				.findByNumber(req.getNumber());
 //		List<Course> courseList = courseDao.xxxxxxx;
-
+		// 讓for不要一直進去資料庫
 		if (!checkNumber(req.getNumber())) {
 			return new SearchCourseResponse("學號錯誤");
 		}
-		var student = studentDao.findByNumber(req.getNumber());
+		Student student = studentDao.findByNumber(req.getNumber());
 		List<Course> courseList = new ArrayList<Course>();
-		for (StudentCourse course : studentCourseDao.findByNumber(req.getNumber())) {
+		for (StudentCourse course : studentAndCourseList) {
 			courseList.add(courseDao.findByCourseCode(course.getCourseCode()));
 		}
 		return new SearchCourseResponse("查詢成功!", student, courseList);
@@ -176,8 +181,44 @@ public class CourseServiceImpl implements CourseService {
 	//
 	// 修改課程
 	public CourseResponse updateCourse(CourseRequest req) {
+		List<Course> list = new ArrayList<Course>();
+		for (Course course : req.getCourseList()) {
+			if (!StringUtils.hasText(course.getCourseCode())) {
+				return new CourseResponse("課程代碼不得為空");
+			}
+			if (!courseDao.existsByCourseCode(course.getCourseCode())) {
+				return new CourseResponse("課程代碼錯誤");
+			}
+			if (!StringUtils.hasText(course.getCourseName())) {
+				return new CourseResponse("課程名稱不得為空");
+			}
+			if (course.getWeek() == null) {
+//				可以防止空格(因空格也是null)
+				return new CourseResponse("星期不得為空");
+			}
+			if (course.getStartTime() == null) {
+				return new CourseResponse("上課時間不得為空");
+			}
+			if (course.getEndTime() == null) {
+				return new CourseResponse("下課時間不得為空");
+			}
+			if (course.getCredit() == null) {
+				return new CourseResponse("學分不得為空");
+			}
+			if (course.getWeek() < 1 || course.getWeek() > 7) {
+				return new CourseResponse("星期錯誤，請正確輸入1~7");
+			}
+			if (course.getStartTime() > course.getEndTime()) {
+				return new CourseResponse("下課時間不得早於上課時間");
+			}
+			if (course.getCredit() <= 0 || course.getCredit() > 3) {
+				return new CourseResponse("學分數錯誤，請輸入1~3");
+			}
+			list.add(course);
+		}
+		courseDao.saveAll(list);
+		return new CourseResponse("課程修改完成");
 
-		return null;
 	}
 
 	// 一些簡化程式用的method
@@ -192,22 +233,18 @@ public class CourseServiceImpl implements CourseService {
 		if (!checkNumber(req.getNumber())) {
 			return new CourseResponse("學號錯誤");
 		}
-		int studentCredit = studentDao.findByNumber(req.getNumber()).getCredit();
-		int chooseCredit = studentCredit;
-//		有點冗長
+		int chooseCredit = studentDao.findByNumber(req.getNumber()).getCredit();
+//		有點冗長(已修正)
 		List<StudentCourse> student = new ArrayList<StudentCourse>();
 		List<StudentCourse> sameCourse = new ArrayList<StudentCourse>();
 		List<StudentCourse> studentCourseList = studentCourseDao
 				.findByNumber(req.getNumber());
-//		List<Course> chooseCourseList = new ArrayList<Course>();
-//		找該學生已修的所有課程
 		for (String courseCode : req.getCourseCodeList()) {
-//			建議命名courseCode
+//			建議命名courseCode(已修正)
 			if (!courseDao.existsByCourseCode(courseCode)) {
 				return new CourseResponse("課程代碼錯誤");
 			}
 			if (studentCourseDao.findByCourseCode(courseCode).size() == 3) {
-//				findbycourseCode
 				return new CourseResponse("修課人數已滿", courseCode);
 				// 一堂課只能三人修
 //				有問題待修正  (已修正)
@@ -227,77 +264,30 @@ public class CourseServiceImpl implements CourseService {
 					continue;
 //					如果選過的話放入相同選課清單，進下一次遍歷
 				}
-				//
-				// 怎麼判斷此次選的課程有沒有衝堂
 				if (student.size() > 0) {
 					if (alreadyChooseCourse.getWeek() == chooseCourse.getWeek()) {
 						if (conflict(chooseCourse, alreadyChooseCourse)) {
 							return new CourseResponse("有衝堂!但有選到課", student);
 						}
-//						if (chooseCourse.getStartTime() >= alreadyChooseCourse
-//								.getStartTime()
-//								&& chooseCourse.getStartTime() <= alreadyChooseCourse
-//										.getEndTime()) {
-////							||改成&& (已修正)
-//							return new CourseResponse("有衝堂!但有選到課", student);
-//						}
-//						}
-//						if (chooseCourse.getEndTime() >= alreadyChooseCourse
-//								.getStartTime()
-//								&& chooseCourse.getEndTime() <= alreadyChooseCourse
-//										.getEndTime()) {
-//							return new CourseResponse("有衝堂!但有選到課", student);
-//						}
-
 					}
 				} else if (alreadyChooseCourse.getWeek() == chooseCourse.getWeek()) {
 					if (conflict(chooseCourse, alreadyChooseCourse)) {
 						return new CourseResponse("有衝堂!但有選到課", student);
 					}
-//					if (chooseCourse.getStartTime() >= alreadyChooseCourse.getStartTime()
-//							&& chooseCourse.getStartTime() <= alreadyChooseCourse
-//									.getEndTime()) {
-////						||改成&& (已修正)
-//						return new CourseResponse("衝堂");
-//					}
-//					if (chooseCourse.getEndTime() >= alreadyChooseCourse.getStartTime()
-//							&& chooseCourse.getEndTime() <= alreadyChooseCourse
-//									.getEndTime()) {
-//						return new CourseResponse("衝堂");
-//					}
-
 				}
 			}
-
 			StudentCourse studentCourse = new StudentCourse(chooseCourse.getCourseCode(),
 					req.getNumber(), chooseCourse.getCourseName(),
 					chooseCourse.getCredit());
-//			if (
-//					studentCourseList.contains(studentCourse)
-//					如果該學生已修的所有課程包含欲新增的課程
-//					衝堂重複判斷
-//			(!studentCourseDao.findByNumberIsAndCourseNameIs(req.getNumber(),
-//					lesson.getCourseName()).isEmpty())) {
-//				
-//				可能可以刪掉 (已刪)
-//				continue;
-//			}
 			student.add(studentCourse);
 			studentCourseDao.save(studentCourse);
 		}
-//		確認此次選課是否互相衝堂(暴力解法)
-
-//		改成逐筆save
-//		studentCourseDao.saveAll(student);
 		studentDao.setStudentCredit(req.getNumber(), chooseCredit);
-		// 重複選課就是衝堂 不給選了
-//		if (!sameCourse.isEmpty()) {
-//			return new CourseResponse("選課成功但有重複選課", student);
-//		}
 		return new CourseResponse("選課成功", student);
 
 	}
 
+	// 判斷衝堂
 	public boolean conflict(Course chooseCourse, Course alreadyChooseCourse) {
 		return (chooseCourse.getStartTime() >= alreadyChooseCourse.getStartTime()
 				&& chooseCourse.getStartTime() <= alreadyChooseCourse.getEndTime())

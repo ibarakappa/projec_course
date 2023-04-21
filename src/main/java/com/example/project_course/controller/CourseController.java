@@ -31,6 +31,11 @@ public class CourseController {
 		return courseService.addNewCourse(req);
 	}
 
+	@PostMapping("/update_Course")
+	public CourseResponse updateCourse(@RequestBody CourseRequest req) {
+		return courseService.updateCourse(req);
+	}
+
 	@PostMapping("/delete_Course")
 	public CourseResponse deleteCourse(@RequestBody CourseRequest req) {
 		return courseService.deleteCourse(req);
