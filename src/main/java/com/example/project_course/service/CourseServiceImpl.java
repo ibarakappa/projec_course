@@ -182,7 +182,7 @@ public class CourseServiceImpl implements CourseService {
 		int studentCredit = studentDao.findByNumber(req.getNumber()).getCredit();
 		int chooseCredit = studentCredit;
 		List<StudentCourse> student = new ArrayList<StudentCourse>();
-		List<StudentCourse> overChoose = new ArrayList<StudentCourse>();
+		List<StudentCourse> sameCourse = new ArrayList<StudentCourse>();
 		List<StudentCourse> studentCourseList = studentCourseDao
 				.findByNumber(req.getNumber());
 		for (String course : req.getCourseCodeList()) {
@@ -217,14 +217,14 @@ public class CourseServiceImpl implements CourseService {
 			if (studentCourseList.contains(studentCourse)
 					|| (!studentCourseDao.findByNumberIsAndCourseNameIs(req.getNumber(),
 							lesson.getCourseName()).isEmpty())) {
-				overChoose.add(studentCourse);
+				sameCourse.add(studentCourse);
 				continue;
 			}
 			student.add(studentCourse);
 		}
 		studentCourseDao.saveAll(student);
 		studentDao.setStudentCredit(req.getNumber(), chooseCredit);
-		if (!overChoose.isEmpty()) {
+		if (!sameCourse.isEmpty()) {
 			return new CourseResponse("選課成功但有重複選課", student);
 		}
 		return new CourseResponse("選課成功", student);
