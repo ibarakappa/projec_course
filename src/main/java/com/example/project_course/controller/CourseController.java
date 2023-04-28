@@ -1,16 +1,22 @@
 package com.example.project_course.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.project_course.entity.Course;
 import com.example.project_course.service.CourseService;
 import com.example.project_course.vo.CourseRequest;
 import com.example.project_course.vo.CourseResponse;
 import com.example.project_course.vo.SearchCourseRequest;
 import com.example.project_course.vo.SearchCourseResponse;
 
+@CrossOrigin
 @RestController
 public class CourseController {
 	@Autowired
@@ -46,6 +52,11 @@ public class CourseController {
 		return courseService.addNewStudent(req);
 	}
 
+	@PostMapping("/update_Student")
+	public CourseResponse updateStudent(@RequestBody CourseRequest req) {
+		return courseService.updateStudent(req);
+	}
+
 	@PostMapping("/delete_Student")
 	public CourseResponse deleteStudent(@RequestBody CourseRequest req) {
 		return courseService.deleteStudent(req);
@@ -66,4 +77,10 @@ public class CourseController {
 	public SearchCourseResponse searchCourseByName(@RequestBody SearchCourseRequest req) {
 		return courseService.searchCourseByName(req);
 	}
+
+	@RequestMapping("/allCourse")
+	public List<Course> allCourse() {
+		return courseService.allCourse();
+	}
+
 }

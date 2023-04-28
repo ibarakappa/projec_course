@@ -12,14 +12,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CourseResponse {
 	@JsonProperty("系統訊息")
 	private String message;
-	@JsonProperty("課程:")
+	@JsonProperty("課程")
 	private String lesson;
 	@JsonProperty("你的課程清單")
 	private List<StudentCourse> list;
-	@JsonProperty("課程資料")
+	@JsonProperty("課程資料表")
 	private List<Course> courselist;
 	@JsonProperty("學生資料")
 	private Student student;
+	@JsonProperty("課程資料")
+	private Course course;
+
+	public CourseResponse(String message, Course course) {
+		super();
+		this.message = message;
+		this.course = course;
+	}
 
 	public CourseResponse(String message, Student student) {
 		super();
@@ -86,6 +94,14 @@ public class CourseResponse {
 
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+
+	public Course getCourse() {
+		return course;
+	}
+
+	public void setCourse(Course course) {
+		this.course = course;
 	}
 
 }
