@@ -360,9 +360,16 @@ public class CourseServiceImpl implements CourseService {
 
 	// 退選課程
 	public CourseResponse dropCourse(CourseRequest req) {
+//		確認該生學分
 		int credit = studentDao.findByNumber(req.getNumber()).getCredit();
+//		此次退選要扣掉的學分
 		int deleteCredit = 0;
+////		計算是否有退選失敗
 		int noneCourseList = 0;
+//		確認輸入資訊是否正確
+		if (req.getCourseCodeList().size() == 0) {
+			return new CourseResponse("退選清單不得為0");
+		}
 		if (req.getNumber() == null) {
 			return new CourseResponse("請輸入學號");
 		}
@@ -372,7 +379,9 @@ public class CourseServiceImpl implements CourseService {
 		if (req.getCourseCodeList().size() == 0) {
 			return new CourseResponse("請輸入想退選的課程");
 		}
+//		建立此次要刪除的課程清單
 		ArrayList<StudentCourse> dropCourseList = new ArrayList<StudentCourse>();
+
 		for (String course : req.getCourseCodeList()) {
 			if (!courseDao.existsByCourseCode(course)) {
 				return new CourseResponse("課程代碼錯誤!");
